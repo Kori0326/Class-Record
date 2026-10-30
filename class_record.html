@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Class record{% endblock %}
+{% block content %}
+  <h1>Class record</h1>
+  <div class="panel table-wrap">
+    <table>
+      <thead><tr><th>Student number</th><th>Student</th><th>Midterm</th><th>Final</th><th>Overall</th><th>Remark</th></tr></thead>
+      <tbody>
+      {% for row in rows %}
+        <tr>
+          <td>{{ row.student.student_number }}</td>
+          <td><a href="{{ url_for('student_record', sid=row.student.id) }}">{{ row.student.last_name }}, {{ row.student.first_name }}</a></td>
+          <td>{{ row.summary.midterm|fmt }}</td><td>{{ row.summary.final|fmt }}</td><td>{{ row.summary.overall|fmt }}</td><td>{{ row.summary.remark }}</td>
+        </tr>
+      {% else %}<tr><td colspan="6" class="muted">No students have been added.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

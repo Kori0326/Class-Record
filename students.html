@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Students{% endblock %}
+{% block content %}
+  <h1>Students</h1>
+  <form class="student-search" method="get" action="{{ url_for('students') }}">
+    <label for="q">Search by name or student number</label>
+    <input id="q" name="q" value="{{ q }}">
+    <div class="actions search-actions">
+      <button type="submit">Search</button>
+      {% if q %}<a href="{{ url_for('students') }}">Clear</a>{% endif %}
+      <a class="button" href="{{ url_for('add_student') }}">Add student</a>
+    </div>
+  </form>
+  <div class="panel table-wrap">
+    <table>
+      <thead><tr><th>Student number</th><th>Name</th><th>Course</th><th>Year / section</th><th>Actions</th></tr></thead>
+      <tbody>
+      {% for student in students %}
+        <tr>
+          <td>{{ student.student_number }}</td>
+          <td><a href="{{ url_for('student_record', sid=student.id) }}">{{ student.last_name }}, {{ student.first_name }} {{ student.middle_name }}</a></td>
+          <td>{{ student.course }}</td><td>{{ student.year_section }}</td>
+          <td class="actions">
+            <a href="{{ url_for('edit_student', sid=student.id) }}">Edit</a>
+            <form method="post" action="{{ url_for('delete_student', sid=student.id) }}" onsubmit="return confirm('Delete this student and all their scores?')">
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+              <button class="danger" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="muted">No students found.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

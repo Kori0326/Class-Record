@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ student.last_name }}, {{ student.first_name }}{% endblock %}
+{% block content %}
+  <h1>{{ student.last_name }}, {{ student.first_name }} {{ student.middle_name }}</h1>
+  <p class="muted">{{ student.student_number }}{% if student.course %} · {{ student.course }}{% endif %}{% if student.year_section %} · {{ student.year_section }}{% endif %}</p>
+  <section class="panel">
+    <h2>Grade summary</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Period</th>{% for category in categories %}<th>{{ category|capitalize }} ({{ (weights[category] * 100)|round|int }}%)</th>{% endfor %}<th>Term grade</th></tr></thead>
+        <tbody>
+          {% for term in terms %}
+            <tr><th>{{ term|capitalize }}</th>
+              {% for category in categories %}<td>{{ summary.category_pct[term][category]|fmt }}{% if summary.category_pct[term][category] is not none %}%{% endif %}</td>{% endfor %}
+              <td>{{ summary[term]|fmt }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Overall grade:</strong> {{ summary.overall|fmt }} &nbsp; <strong>Remark:</strong> {{ summary.remark }}</p>
+  </section>
+  <section class="panel">
+    <h2>Record a score</h2>
+    <form method="post" action="{{ url_for('add_score', sid=student.id) }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <label for="term">Grading period</label>
+      <select id="term" name="term" required>{% for term in terms %}<option value="{{ term }}">{{ term|capitalize }}</option>{% endfor %}</select>
+      <label for="category">Category</label>
+      <select id="category" name="category" required>{% for category in categories %}<option value="{{ category }}">{{ category|capitalize }}</option>{% endfor %}</select>
+      <label for="title">Activity / assessment title</label><input id="title" name="title" required>
+      <label for="score">Score</label><input id="score" name="score" type="number" min="0" step="any" required>
+      <label for="max_score">Maximum score</label><input id="max_score" name="max_score" type="number" min="0.01" step="any" required>
+      <p><button type="submit">Record score</button></p>
+    </form>
+  </section>
+  <section class="panel table-wrap">
+    <h2>Scores</h2>
+    <table>
+      <thead><tr><th>Period</th><th>Category</th><th>Title</th><th>Score</th><th>Actions</th></tr></thead>
+      <tbody>
+      {% for score in scores %}
+        <tr><td>{{ score.term|capitalize }}</td><td>{{ score.category|capitalize }}</td><td>{{ score.title }}</td><td>{{ score.score|fmt }} / {{ score.max_score|fmt }}</td>
+          <td class="actions">
+            <a href="{{ url_for('edit_score', score_id=score.id) }}">Edit</a>
+            <form method="post" action="{{ url_for('delete_score', score_id=score.id) }}" onsubmit="return confirm('Delete this score?')">
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+              <button class="danger" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}<tr><td colspan="5" class="muted">No scores recorded yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </section>
+  <a href="{{ url_for('students') }}">Back to students</a>
+{% endblock %}

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Class Record{% endblock %} | Class Record</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #172033; background: #f3f5f9; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header { background: #173b70; color: white; }
+    nav { max-width: 1100px; margin: auto; padding: 14px 20px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+    nav a { color: white; text-decoration: none; }
+    nav .brand { font-weight: 700; margin-right: auto; }
+    nav form { margin: 0; }
+    nav button { color: white; background: transparent; border: 0; padding: 0; font: inherit; cursor: pointer; }
+    main { max-width: 1100px; margin: 28px auto; padding: 0 20px; }
+    h1 { margin-top: 0; }
+    a { color: #1756a9; }
+    .panel, .stat { background: white; border: 1px solid #dfe4ec; border-radius: 8px; padding: 18px; margin-bottom: 18px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+    .stat strong { display: block; font-size: 1.5rem; margin-top: 5px; }
+    .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .student-search { max-width: 480px; margin-bottom: 18px; }
+    .student-search .search-actions { margin-top: 8px; }
+    button, .button { display: inline-block; border: 0; border-radius: 5px; background: #1756a9; color: white; padding: 9px 13px; font: inherit; text-decoration: none; cursor: pointer; }
+    .secondary { background: #596579; }
+    .danger { background: #a52d38; }
+    input, select { width: 100%; max-width: 480px; border: 1px solid #aeb8c7; border-radius: 5px; padding: 9px; font: inherit; }
+    label { display: block; font-weight: 600; margin: 12px 0 5px; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { padding: 10px; border-bottom: 1px solid #e1e5eb; text-align: left; vertical-align: top; }
+    th { background: #edf1f7; }
+    .table-wrap { overflow-x: auto; }
+    .flash { padding: 11px 14px; margin-bottom: 10px; border-radius: 5px; background: #e8f1ff; }
+    .flash.error { background: #fde9e9; color: #7d1e25; }
+    .flash.success { background: #e6f5e9; color: #205a2d; }
+    .muted { color: #5e6878; }
+    @media (max-width: 600px) { nav { gap: 12px; } th, td { padding: 8px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a class="brand" href="{{ url_for('dashboard') }}">Class Record</a>
+      {% if session.get("user_id") %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('students') }}">Students</a>
+        <a href="{{ url_for('class_record') }}">Class record</a>
+        <a href="{{ url_for('account') }}">Account</a>
+        <form method="post" action="{{ url_for('logout') }}">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <button type="submit">Log out</button>
+        </form>
+      {% endif %}
+    </nav>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

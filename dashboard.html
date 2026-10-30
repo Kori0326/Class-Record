@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+  <h1>Dashboard</h1>
+  <div class="stats">
+    <div class="stat">Students<strong>{{ n_students }}</strong></div>
+    <div class="stat">Recorded scores<strong>{{ n_scores }}</strong></div>
+    <div class="stat">Average overall grade<strong>{{ avg|fmt }}</strong></div>
+    <div class="stat">Passing students<strong>{{ passing }} / {{ graded }}</strong></div>
+  </div>
+  <p class="actions">
+    <a class="button" href="{{ url_for('add_student') }}">Add student</a>
+    <a class="button secondary" href="{{ url_for('class_record') }}">View class record</a>
+  </p>
+{% endblock %}

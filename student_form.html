@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ mode }} student{% endblock %}
+{% block content %}
+  <section class="panel">
+    <h1>{{ mode }} student</h1>
+    <form method="post">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      {% for key, label in [
+        ("student_number", "Student number"),
+        ("last_name", "Last name"),
+        ("first_name", "First name"),
+        ("middle_name", "Middle name"),
+        ("course", "Course"),
+        ("year_section", "Year / section"),
+        ("email", "Email")
+      ] %}
+        <label for="{{ key }}">{{ label }}{% if key in ("student_number", "last_name", "first_name") %} *{% endif %}</label>
+        <input id="{{ key }}" name="{{ key }}" value="{{ student[key] if student and student[key] is defined else '' }}"
+               {% if key in ("student_number", "last_name", "first_name") %}required{% endif %}
+               {% if key == "email" %}type="email"{% endif %}>
+      {% endfor %}
+      <p class="actions">
+        <button type="submit">Save student</button>
+        <a class="button secondary" href="{{ url_for('students') }}">Cancel</a>
+      </p>
+    </form>
+  </section>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Edit score{% endblock %}
+{% block content %}
+  <section class="panel">
+    <h1>Edit score</h1>
+    <p>Student: {{ student.last_name }}, {{ student.first_name }}</p>
+    <form method="post">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <label for="term">Grading period</label>
+      <select id="term" name="term" required>{% for term in terms %}<option value="{{ term }}" {% if score.term == term %}selected{% endif %}>{{ term|capitalize }}</option>{% endfor %}</select>
+      <label for="category">Category</label>
+      <select id="category" name="category" required>{% for category in categories %}<option value="{{ category }}" {% if score.category == category %}selected{% endif %}>{{ category|capitalize }}</option>{% endfor %}</select>
+      <label for="title">Title</label><input id="title" name="title" value="{{ score.title }}" required>
+      <label for="score">Score</label><input id="score" name="score" type="number" min="0" step="any" value="{{ score.score }}" required>
+      <label for="max_score">Maximum score</label><input id="max_score" name="max_score" type="number" min="0.01" step="any" value="{{ score.max_score }}" required>
+      <p class="actions"><button type="submit">Save score</button><a class="button secondary" href="{{ url_for('student_record', sid=student.id) }}">Cancel</a></p>
+    </form>
+  </section>
+{% endblock %}
